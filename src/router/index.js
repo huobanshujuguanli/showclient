@@ -35,14 +35,14 @@ export const constantRouterMap = [
     ]
   },
   {
-    path:'/device-online' ,
+    path:'/device-index' ,
     component: Layout,
     children: [
       {
         path: 'index',
-        component: () => import('../views/device/device-online'),
+        component: () => import('../views/device/admin-device'),
         name: 'home',
-        meta: { title: '在线设备', noCache: true}
+        meta: { title: '展示设备', noCache: true}
       }
     ]
   }
