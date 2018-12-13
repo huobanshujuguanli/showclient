@@ -1,6 +1,6 @@
 # data-manage-vue
 
-> 数据管理平台-前端
+> 数据展示平台-前端
 
 ## Build Setup
 
