@@ -21,7 +21,32 @@ export const constantRouterMap = [
         meta: { title: '首页', noCache: true}
       }
     ]
+  },
+  {
+    path:'/device' ,
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('../views/device/device-map'),
+        name: 'home',
+        meta: { title: '地图分布', noCache: true}
+      }
+    ]
+  },
+  {
+    path:'/device-online' ,
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('../views/device/device-online'),
+        name: 'home',
+        meta: { title: '在线设备', noCache: true}
+      }
+    ]
   }
+
 ]
 export default new Router({
   mode: 'history',
