@@ -6,7 +6,13 @@ export function getDeviceMapListByConditionAndPage(query) {
     params: query
   })
 }
-
+export function getDeviceMapListByCondition(query) {
+  return request({
+    url: '/deviceMap/devicemaplistbycondition',
+    method: 'get',
+    params: query
+  })
+}
 
 
 export function editDeviceMap(data) {
