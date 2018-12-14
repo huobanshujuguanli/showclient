@@ -40,7 +40,7 @@ export const constantRouterMap = [
     children: [
       {
         path: 'index',
-        component: () => import('../views/device/admin-device'),
+        component: () => import('../views/device/'),
         name: 'home',
         meta: { title: '展示设备', noCache: true}
       }
