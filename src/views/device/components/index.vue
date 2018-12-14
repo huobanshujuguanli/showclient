@@ -4,8 +4,7 @@
   </div>
 </template>
 <script>
-  import checkPermission from '@/utils/permission'
-  import {productDataOnMap} from "@/api/product";
+  import {getDeviceMapListByCondition} from "@/api/device-map";
   export default {
     name:'map-component',
     props:{
@@ -18,7 +17,7 @@
       return {
         center: {lng: 105, lat: 34},
         mapPoints:[],
-        userId:''
+        enterpriseId:'',
       }
     },
     mounted() {
@@ -31,9 +30,10 @@
     },
     methods: {
       loadMapData(map) {
-        //3->锅炉厂管理员 5->锅炉厂普通用户
-        if(checkPermission(['3','5']))this.userId=this.$store.state.user.userId;
-        productDataOnMap({userId:this.userId}).then((res)=>{
+        this.enterpriseId=this.$store.state.user.orgId;
+
+        getDeviceMapListByCondition({enterpriseId:this.enterpriseId}).then((res)=>{
+          console.log(res);
           this.showMapData(map,res.data.data)
         })
       },
