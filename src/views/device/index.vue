@@ -73,16 +73,20 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row>
+          <!--<el-row>
             <el-col :span="12">
               <el-form-item label="地址" prop="address">
                 <el-input v-model="deviceFormData.address" readonly></el-input>
               </el-form-item>
             </el-col>
-          </el-row>
+          </el-row>-->
         </el-form>
         <el-row style=" overflow-x: hidden;">
-          <div id="product_map" :style="{width:mapWidth+'px',height:mapHeight+'px'}" class="product_map"></div>
+          <div id="deviceMap" :style="{width:mapWidth+'px',height:mapHeight+'px'}" class="devicemap"></div>
+          <baidu-map class="bm-view" :center="center" :zoom="zoom" :scroll-wheel-zoom="true" ak="http://api.map.baidu.com/api?v=2.0&ak=eqPZV35edaZZGefOIopjLNqTSj4qI89Y" ref="allMap" @ready="mapReady" @click="getClickInfo">
+
+            <bm-city-list anchor="BMAP_ANCHOR_TOP_LEFT"></bm-city-list>
+          </baidu-map>
         </el-row>
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取消</el-button>
@@ -90,7 +94,9 @@
           <el-button type="primary" @click="insertManyData" v-else>确认</el-button>
         </div>
       </el-dialog>
+
     </div>
+
   </div>
 </template>
 
@@ -103,6 +109,7 @@
   import {getCustomerOrEnterpriseList} from '@/api/token-dict'
   import {getDeviceTypeList} from '@/api/device-type'
   import {getDeviceMapListByConditionAndPage} from '@/api/device-map'
+  import {BaiduMap,BmCityList,BmScale,BmNavigation,BmOverviewMap,BmMarker,BmControl,BmView,BmAutoComplete,BmLocalSearch} from 'vue-baidu-map'
   /* 正数、负数、和小数*/
   function validateDeviceNo(textval) {
     const urlregex = /^[0-9]\d{9}$/
@@ -117,7 +124,19 @@
     return array.filter(item=>item);
   }
   export default {
-    name: 'product_map',
+    name: 'deviceMap',
+    components:{
+      BaiduMap,
+      BmCityList,
+      BmScale,
+      BmNavigation,
+      BmOverviewMap,
+      BmMarker,
+      BmControl,
+      BmView,
+      BmAutoComplete,
+      BmLocalSearch
+    },
     data() {
       const validateEnterpriseFun = (rule, value, callback) => {
         if (!value) {
@@ -141,8 +160,19 @@
         callback()
       }
       return {
-        mapWidth:document.body.clientWidth,
-        mapHeight:document.body.clientHeight-88,
+        //百度地图
+        center:{lng:0,lat:0},
+        zoom:3,
+        //设置定位
+        locDialog:false,
+        //调度装备
+        locData:{
+          ids:0,  // 设置定位id
+          longitude:'', //设置定位经度
+          latitude:''   //设置定位纬度
+        },
+        mapWidth:100,
+        mapHeight:100,
         list: null,
         listQuery: {
           total:50,
@@ -173,7 +203,6 @@
           boilerCustomerId:null,
           boilerCustomerName:null,
           saleDate:'',
-          saleAddress:'',
           id:'',
           deviceNo:'',
           enterpriseId:'',
@@ -185,14 +214,14 @@
           city:'',
           district:'',
           street:'',
-          address: ''
+          address:'',
         },
         rules: {
           enterpriseId: [{required: true,trigger: 'blur',validator: validateEnterpriseFun }],
           deviceType: [{required: true,  trigger: 'blur',validator: validateDeviceTypeFun }],
           deviceNo: [{required: true, trigger: 'blur',validator: validateDeviceNoFun}],
           importDatetime: [{ required: true, message: '创建时间不能为空', trigger: 'blur' }],
-          address: [{ required: true,trigger: 'blur', message: '售出地址不能为空' }]
+          // address: [{ required: true,trigger: 'blur', message: '售出地址不能为空' }]
         },
         dialogQRCodeFormVisible:false,
         qRCodeFormData:{
@@ -225,22 +254,6 @@
       this.getList()
       this.initEnterpriseList()
       this.initDeviceTypeList()
-    },
-    mounted() {
-      // 百度地图API功能
-      let map = new BMap.Map("product_map");
-      let centerPoint = new BMap.Point(110, 38);
-      map.centerAndZoom(centerPoint,4.5);
-      map.enableScrollWheelZoom(true);
-      map.enableInertialDragging();
-      map.enableContinuousZoom();
-      let size = new BMap.Size(10, 20);
-      map.addControl(new BMap.CityListControl({
-        anchor: BMAP_ANCHOR_TOP_LEFT,
-        offset: size,
-      }));
-      this.loadMap(map)
-      this.selectPoint(map)
     },
     methods: {
       initEnterpriseList(){
@@ -456,94 +469,46 @@
         this.listQuery.pageNum = val
         this.getList()
       },
-      loadMap(map){
-        let productMapData=JSON.parse(this.deviceFormData)
-        this.deviceFormData.id=productMapData.id
-        this.deviceFormData.deviceNo=productMapData.deviceNo
-        this.deviceFormData.longitude=productMapData.longitude
-        this.deviceFormData.latitude=productMapData.latitude
-        this.deviceFormData.province=productMapData.province
-        this.deviceFormData.city=productMapData.city
-        this.deviceFormData.district=productMapData.district
-        this.deviceFormData.street=productMapData.street
-        let province=productMapData.province||"";
-        let city=productMapData.city||"";
-        let district=productMapData.district||"";
-        let street=productMapData.street||"";
-        let saleAddrss=province+city+district+street
-        this.deviceFormData.address=saleAddrss==0?"":saleAddrss
-        let selectPoint = new BMap.Point(this.deviceFormData.longitude, this.deviceFormData.latitude);
-        let marker = new BMap.Marker(selectPoint);
-        marker.addEventListener("click",()=>{
-          let newWindow=openElectronWindow("/controller-run-info?controllerNo="+this.productMapData.controllerNo,{width: 600, height: 500})
-          newWindow.on('closed', () => {
-            newWindow = null
-          })
-        })
-        map.addOverlay(marker);
+      // 百度地图
+      mapReady ({BMap, map}) {
+        this.center.lng = 116.404;
+        this.center.lat = 39.915;
+        this.zoom = 15;
+        window.map = map;   //将map变量存储在全局
       },
-      selectPoint(map){
-        let menu = new BMap.ContextMenu();
-        let self=this;
-        let longitude;
-        let latitude;
-        map.addEventListener("rightclick", function(e){
-          longitude=e.point.lng
-          latitude=e.point.lat
-        });
-        let txtMenuItem = [
-          {
-            text:'标注',
-            callback:function(e){
-              clearMapData()
-              self.deviceFormData.longitude=longitude
-              self.deviceFormData.latitude=latitude
-              let selectPoint = new BMap.Point(self.deviceFormData.longitude, self.deviceFormData.latitude);
-              let marker = new BMap.Marker(selectPoint);
-              map.addOverlay(marker);
-              let geoc = new BMap.Geocoder();
-              geoc.getLocation(selectPoint, function (rs) {
-                let addComp = rs.addressComponents;
-                if(addComp.province&&addComp.city&&addComp.district){
-                  self.deviceFormData.province=addComp.province;
-                  self.deviceFormData.city=addComp.city;
-                  self.deviceFormData.district=addComp.district;
-                  self.deviceFormData.saleAddress=addComp.province+addComp.city+addComp.district
-                }
-                if(addComp.street){
-                  self.deviceFormData.street=addComp.street;
-                  self.deviceFormData.saleAddress+=addComp.street
-                }
-              });
-            }
-          },
-          {
-            text:'清除',
-            callback:function(){
-              clearMapData()
+      // 地图点击事件
+      getClickInfo (e) {
+        map.clearOverlays();
+        let self = this
+        let selectPoint = new BMap.Point(e.point.lng,e.point.lat)
+        let marker = new BMap.Marker(selectPoint)
+        map.addOverlay(marker)
+        let geoc = new BMap.Geocoder();
+        geoc.getLocation(selectPoint,function (rs) {
+          let addComp = rs.addressComponents
+          if(addComp.province&&addComp.city&&addComp.district){
+            self.deviceFormData.province = addComp.province;
+            self.deviceFormData.city = addComp.city;
+            self.deviceFormData.district = addComp.district;
+            self.deviceFormData.address = addComp.province+addComp.city+addComp.district
+            if (addComp.street) {
+              self.deviceFormData.street = addComp.street
+              self.deviceFormData.address += addComp.street
             }
           }
-        ]
-        function clearMapData() {
-          map.clearOverlays();
-          self.deviceFormData.longitude=''
-          self.deviceFormData.latitude=''
-          self.deviceFormData.province=''
-          self.deviceFormData.city=''
-          self.deviceFormData.district=''
-          self.deviceFormData.street=''
-          self.deviceFormData.saleAddress=''
-        }
-        for(let i=0; i < txtMenuItem.length; i++){
-          menu.addItem(new BMap.MenuItem(txtMenuItem[i].text,txtMenuItem[i].callback,100));
-        }
-        map.addContextMenu(menu);
-      },
+        })
+        self.deviceFormData.longitude = e.point.lng
+        self.deviceFormData.latitude = e.point.lat
+      }
     }
   }
 </script>
 <style>
   .el-button+.el-button {
     margin-left: 0px;
+  }
+  .bm-view {
+    widows: 100%;
+    height: 600px;
   }
 </style>
