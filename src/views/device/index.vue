@@ -19,7 +19,7 @@
       </el-table-column>>
       <el-table-column align="left" :show-overflow-tooltip="true"  label="创建时间">
         <template slot-scope="scope">
-          <span>{{scope.row.importDatetime}}</span>
+          <span>{{scope.row.createDatetime}}</span>
         </template>
       </el-table-column>
       <el-table-column align="left" :show-overflow-tooltip="true"  label="地址">
@@ -44,7 +44,7 @@
     <!--设备新增dialog-->
     <div class="el-dialog-device">
       <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="40%">
-        <el-form :rules="rules" ref="deviceFormData" :model="deviceFormData" label-position="right" label-width="80px" style='width: 90%; margin-left:15px;'>
+        <el-form :rules="rules" ref="deviceData" :model="deviceFormData" label-position="right" label-width="80px" style='width: 90%; margin-left:15px;'>
           <el-row>
             <el-col :span="12">
               <el-form-item label="设备编号" prop="deviceNo">
@@ -68,18 +68,11 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="创建时间" prop="importDatetime">
-                <el-date-picker type="datetime" v-model="deviceFormData.importDatetime" :default-value="new Date()" style="width: 100%;" default-time="00:00:00"></el-date-picker>
+              <el-form-item label="创建时间" prop="createDatetime">
+                <el-date-picker type="datetime" v-model="deviceFormData.createDatetime" :default-value="new Date()" style="width: 100%;" default-time="00:00:00"></el-date-picker>
               </el-form-item>
             </el-col>
           </el-row>
-          <!--<el-row>
-            <el-col :span="12">
-              <el-form-item label="地址" prop="address">
-                <el-input v-model="deviceFormData.address" readonly></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>-->
         </el-form>
         <el-row style=" overflow-x: hidden;">
           <div id="deviceMap" :style="{width:mapWidth+'px',height:mapHeight+'px'}" class="devicemap"></div>
@@ -90,8 +83,7 @@
         </el-row>
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取消</el-button>
-          <el-button type="primary" @click="updateData" v-if="deviceFormData.id">确认</el-button>
-          <el-button type="primary" @click="insertManyData" v-else>确认</el-button>
+          <el-button type="primary" @click="updateData">确认</el-button>
         </div>
       </el-dialog>
 
@@ -101,14 +93,10 @@
 </template>
 
 <script>
-  import {fuelArray,mediumArray} from '@/utils/common'
   import {formatDateTime} from '@/utils/date'
-  import {pad} from '@/utils/common'
-  import {getDeviceListByConditionAndPage,insertManyDevice,updateManyDeviceNo,editDevice,deleteDeviceById} from '@/api/device'
   import {getEnterpriseListByCondition} from '@/api/enterprise'
-  import {getCustomerOrEnterpriseList} from '@/api/token-dict'
   import {getDeviceTypeList} from '@/api/device-type'
-  import {getDeviceMapListByConditionAndPage} from '@/api/device-map'
+  import {getDeviceMapListByConditionAndPage,editDeviceMap,deleteDeviceMapById} from '@/api/device-map'
   import {BaiduMap,BmCityList,BmScale,BmNavigation,BmOverviewMap,BmMarker,BmControl,BmView,BmAutoComplete,BmLocalSearch} from 'vue-baidu-map'
   /* 正数、负数、和小数*/
   function validateDeviceNo(textval) {
@@ -165,12 +153,6 @@
         zoom:3,
         //设置定位
         locDialog:false,
-        //调度装备
-        locData:{
-          ids:0,  // 设置定位id
-          longitude:'', //设置定位经度
-          latitude:''   //设置定位纬度
-        },
         mapWidth:100,
         mapHeight:100,
         list: null,
@@ -181,7 +163,7 @@
           deviceNo:null,
           enterpriseId:this.$store.state.user.orgId,
           deviceType:null,
-          importDatetime:null,
+          createDatetime:formatDateTime(new Date(),"yyyy-MM-dd hh:mm:ss"),
           address:null
         },
         enterpriseOption:[],
@@ -205,9 +187,9 @@
           saleDate:'',
           id:'',
           deviceNo:'',
-          enterpriseId:'',
+          enterpriseId:null,
           deviceType:'',
-          importDatetime:'',
+          createDatetime:formatDateTime(new Date(),"yyyy-MM-dd hh:mm:ss"),
           longitude:'',
           latitude:'',
           province:'',
@@ -220,8 +202,7 @@
           enterpriseId: [{required: true,trigger: 'blur',validator: validateEnterpriseFun }],
           deviceType: [{required: true,  trigger: 'blur',validator: validateDeviceTypeFun }],
           deviceNo: [{required: true, trigger: 'blur',validator: validateDeviceNoFun}],
-          importDatetime: [{ required: true, message: '创建时间不能为空', trigger: 'blur' }],
-          // address: [{ required: true,trigger: 'blur', message: '售出地址不能为空' }]
+          createDatetime: [{ required: true, message: '创建时间不能为空', trigger: 'blur' }]
         },
         dialogQRCodeFormVisible:false,
         qRCodeFormData:{
@@ -237,9 +218,6 @@
           ]
         },
         dialogEncryptionFormVisible:false,
-        encryptionFormData:{
-          encryptionDeviceStr:''
-        },
         listLoading:false
       }
     },
@@ -263,15 +241,6 @@
             enterpriseOption.push({value:item.id,label:item.enterpriseName})
           })
           this.enterpriseOption=enterpriseOption
-        })
-      },
-      initCustomerList(){
-        let customerOption=[]
-        getCustomerOrEnterpriseList(2).then(data=>{
-          data.data.data.forEach(item=>{
-            customerOption.push({value:item.code+"",label:item.name})
-          })
-          this.customerOption=customerOption
         })
       },
       initDeviceTypeList(){
@@ -310,7 +279,7 @@
           deviceType:'',
           status:0,
           runStatus:0,
-          importDatetime:new Date(),
+          createDatetime:new Date(),
           startDeviceSuffix:'',
           endDeviceSuffix:'',
           /*onlineStates:0*/
@@ -322,13 +291,6 @@
         this.dialogFormVisible = true
         this.$nextTick(() => {
           this.$refs['deviceFormData'].clearValidate()
-        })
-      },
-      handleEncryptionDevice(row) {
-        this.encryptionFormData = Object.assign({}, row) // copy obj
-        this.dialogEncryptionFormVisible = true
-        this.$nextTick(() => {
-          this.$refs['encryptionForm'].clearValidate()
         })
       },
       handleGenerateQRCode(){
@@ -344,33 +306,14 @@
         if(this.deviceFormData.saleDatetime){
           this.deviceFormData.saleDatetime=new Date(this.deviceFormData.saleDatetime)
         }
-        if(this.deviceFormData.importDatetime){
-          this.deviceFormData.importDatetime=new Date(this.deviceFormData.importDatetime)
+        if(this.deviceFormData.createDatetime){
+          this.deviceFormData.createDatetime=new Date(this.deviceFormData.createDatetime)
         }
         this.dialogStatus = 'update'
         this.dialogFormVisible = true
         this.$nextTick(() => {
           this.$refs['deviceFormData'].clearValidate()
         })
-      },
-      encryptionDevice() {
-        if(this.encryptionFormData.encryptionDeviceStr){
-          let data=filter_array(this.encryptionFormData.encryptionDeviceStr.split("\n"))
-          let deviceList=[];
-          data.forEach(item=>{
-            deviceList.push({deviceSuffix:item.substring(0,item.indexOf("-")),deviceNo:item.substring(item.indexOf("-")+1,item.length)})
-          })
-          updateManyDeviceNo(deviceList).then(data=>{
-            this.dialogEncryptionFormVisible = false
-            this.$message({
-              message: data.data.msg,
-              type: 'success'
-            });
-            this.getList()
-          })
-        }else{
-
-        }
       },
       generateQRCode(){
         this.$refs.qRCodeForm.validate(valid => {
@@ -382,56 +325,18 @@
           }
         })
       },
-      calculateStartSuffixAndEndSuffix(){
-        if(this.deviceFormData.startDeviceSuffix&&this.deviceFormData.startDeviceSuffix.length==10){
-          this.deviceFormData.endDeviceSuffix=this.deviceFormData.startDeviceSuffix.substring(0,5)+pad(Number(this.deviceFormData.startDeviceSuffix.substring(5,10))+50,5)
-        }
-      },
       dealDate(){
         if(this.deviceFormData.saleDatetime){
           this.deviceFormData.saleDatetime=formatDateTime(this.deviceFormData.saleDatetime,"yyyy-MM-dd hh:mm:ss")
         }
-        if(this.deviceFormData.importDatetime){
-          this.deviceFormData.importDatetime=formatDateTime(this.deviceFormData.importDatetime,"yyyy-MM-dd hh:mm:ss")
+        if(this.deviceFormData.createDatetime){
+          this.deviceFormData.createDatetime=formatDateTime(this.deviceFormData.createDatetime,"yyyy-MM-dd hh:mm:ss")
         }
       },
-      insertManyData(){
-        this.$refs.deviceFormData.validate(valid => {
-          if (valid) {
-            this.dealDate()
-            let deviceNoPrefix=this.deviceFormData.startDeviceSuffix.substring(0,5)
-            let startNum=Number(this.deviceFormData.startDeviceSuffix.substring(5,10))
-            let endNum=Number(this.deviceFormData.endDeviceSuffix.substring(5,10))
-            delete this.deviceFormData.startDeviceSuffix
-            delete this.deviceFormData.endDeviceSuffix
-            let deviceList=[];
-            while (startNum<=endNum){
-              let deviceFormData=Object.assign({}, this.deviceFormData)
-              deviceFormData.areaId=100101001
-              deviceFormData.manufacturerId=1
-              deviceFormData.devicePrefix=1
-              deviceFormData.deviceSuffix=deviceNoPrefix+pad(startNum,5)
-              deviceFormData.deviceNo=deviceNoPrefix+pad(startNum,5)
-              deviceList.push(deviceFormData)
-              startNum++
-            }
-            insertManyDevice(deviceList).then(data=>{
-              this.dialogFormVisible = false
-              this.$message({
-                message: data.data.msg,
-                type: 'success'
-              });
-              this.getList()
-            })
-          } else {
-            return false
-          }
-        })
-      },
       updateData(){
-        this.$refs.deviceFormData.validate(valid => {
+        this.$refs.deviceData.validate(valid => {
           this.dealDate()
-          editDevice(this.deviceFormData).then(data=>{
+          editDeviceMap(this.deviceFormData).then(data=>{
             this.dialogFormVisible = false
             this.$message({
               message: "成功",
@@ -447,7 +352,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          deleteDeviceById(row.id).then(data=>{
+          deleteDeviceMapById(row.id).then(data=>{
             this.$message({
               message: '删除成功',
               type: 'success'
