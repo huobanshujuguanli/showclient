@@ -7,9 +7,9 @@
           <span>{{scope.row.deviceNo}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="left" :show-overflow-tooltip="true"  label="所属客户">
+      <el-table-column align="left" :show-overflow-tooltip="true"  label="所属企业">
         <template slot-scope="scope">
-          <span v-for="item in customerOption" v-if="scope.row.deviceSuffix.substring(0,5)==item.value">{{item.label}}</span>
+          <span v-for="item in enterpriseOption" v-if="item.value==scope.row.enterpriseId">{{item.label}}</span>
         </template>
       </el-table-column>
       <el-table-column align="left" :show-overflow-tooltip="true" label="设备类型">
@@ -19,12 +19,13 @@
       </el-table-column>>
       <el-table-column align="left" :show-overflow-tooltip="true"  label="创建时间">
         <template slot-scope="scope">
-          <span>{{scope.row.createDatetime}}</span>
+          <span v-if="scope.row.createDateTime">{{scope.row.createDateTime}}</span>
+          <span v-if="scope.row.createDateTime==null">无</span>
         </template>
       </el-table-column>
       <el-table-column align="left" :show-overflow-tooltip="true"  label="地址">
         <template slot-scope="scope">
-          <span v-if="scope.row.province||scope.row.city||scope.row.district||scope.row.street">{{scope.row.province}}{{scope.row.city}}{{scope.row.district}}{{scope.row.street}}</span><span v-else>无</span>
+          <span v-if="scope.row.address">{{scope.row.address}}</span><span v-else>无</span>
         </template>
       </el-table-column>
     </el-table>
@@ -68,8 +69,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="创建时间" prop="createDatetime">
-                <el-date-picker type="datetime" v-model="deviceFormData.createDatetime" :default-value="new Date()" style="width: 100%;" default-time="00:00:00"></el-date-picker>
+              <el-form-item label="创建时间" prop="createDateTime">
+                <el-date-picker v-model="deviceFormData.createDateTime" type="datetime" :default-time="new Date()" default-time="00:00:00" style="width: 100%"></el-date-picker>
               </el-form-item>
             </el-col>
           </el-row>
@@ -163,7 +164,7 @@
           deviceNo:null,
           enterpriseId:this.$store.state.user.orgId,
           deviceType:null,
-          createDatetime:formatDateTime(new Date(),"yyyy-MM-dd hh:mm:ss"),
+          createDateTime:formatDateTime(new Date(),"yyyy-MM-dd hh:mm:ss"),
           address:null
         },
         enterpriseOption:[],
@@ -180,16 +181,11 @@
         dialogStatus: '',
         dialogFormVisible: false,
         deviceFormData: {
-          controllerNo:'',
-          isSell:1,//售出的状态
-          boilerCustomerId:null,
-          boilerCustomerName:null,
           saleDate:'',
-          id:'',
           deviceNo:'',
           enterpriseId:null,
           deviceType:'',
-          createDatetime:formatDateTime(new Date(),"yyyy-MM-dd hh:mm:ss"),
+          createDateTime:formatDateTime(new Date(),"yyyy-MM-dd hh:mm:ss"),
           longitude:'',
           latitude:'',
           province:'',
@@ -202,7 +198,7 @@
           enterpriseId: [{required: true,trigger: 'blur',validator: validateEnterpriseFun }],
           deviceType: [{required: true,  trigger: 'blur',validator: validateDeviceTypeFun }],
           deviceNo: [{required: true, trigger: 'blur',validator: validateDeviceNoFun}],
-          createDatetime: [{ required: true, message: '创建时间不能为空', trigger: 'blur' }]
+          createDateTime: [{ required: true, message: '创建时间不能为空', trigger: 'blur' }]
         },
         dialogQRCodeFormVisible:false,
         qRCodeFormData:{
@@ -255,10 +251,6 @@
       openTableMenu(row, event) {
         this.$refs.menuContext.openTableMenu(row,event);
       },
-      handleFilter() {
-        this.listQuery.pageNum = 1
-        this.getList()
-      },
       getList() {
         this.listLoading = true
         getDeviceMapListByConditionAndPage(this.listQuery).then(response => {
@@ -279,7 +271,7 @@
           deviceType:'',
           status:0,
           runStatus:0,
-          createDatetime:new Date(),
+          createDateTime:new Date(),
           startDeviceSuffix:'',
           endDeviceSuffix:'',
           /*onlineStates:0*/
@@ -290,47 +282,12 @@
         this.dialogStatus = 'create'
         this.dialogFormVisible = true
         this.$nextTick(() => {
-          this.$refs['deviceFormData'].clearValidate()
-        })
-      },
-      handleGenerateQRCode(){
-        this.qRCodeFormData.startSuffix=''
-        this.qRCodeFormData.endSuffix=''
-        this.dialogQRCodeFormVisible = true
-        this.$nextTick(() => {
-          this.$refs['qRCodeForm'].clearValidate()
-        })
-      },
-      handleUpdate(row) {
-        this.deviceFormData = Object.assign({}, row)
-        if(this.deviceFormData.saleDatetime){
-          this.deviceFormData.saleDatetime=new Date(this.deviceFormData.saleDatetime)
-        }
-        if(this.deviceFormData.createDatetime){
-          this.deviceFormData.createDatetime=new Date(this.deviceFormData.createDatetime)
-        }
-        this.dialogStatus = 'update'
-        this.dialogFormVisible = true
-        this.$nextTick(() => {
-          this.$refs['deviceFormData'].clearValidate()
-        })
-      },
-      generateQRCode(){
-        this.$refs.qRCodeForm.validate(valid => {
-          if (valid) {
-            this.dialogQRCodeFormVisible = false
-            window.open(process.env.BASE_API+'/device/generateqrcode?startSuffix='+this.qRCodeFormData.startSuffix+'&endSuffix='+this.qRCodeFormData.endSuffix, "_blank");
-          } else {
-            return false
-          }
+          this.$refs['deviceData'].clearValidate()
         })
       },
       dealDate(){
-        if(this.deviceFormData.saleDatetime){
-          this.deviceFormData.saleDatetime=formatDateTime(this.deviceFormData.saleDatetime,"yyyy-MM-dd hh:mm:ss")
-        }
-        if(this.deviceFormData.createDatetime){
-          this.deviceFormData.createDatetime=formatDateTime(this.deviceFormData.createDatetime,"yyyy-MM-dd hh:mm:ss")
+        if(this.deviceFormData.createDateTime){
+          this.deviceFormData.createDateTime=formatDateTime(this.deviceFormData.createDateTime,"yyyy-MM-dd hh:mm:ss")
         }
       },
       updateData(){
@@ -413,7 +370,7 @@
     margin-left: 0px;
   }
   .bm-view {
-    widows: 100%;
+    width: 100%;
     height: 600px;
   }
 </style>
