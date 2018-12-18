@@ -23,12 +23,10 @@
     </div>
 </template>
 <script>
-    import {getControllerByteData,getControllerType} from '@/api/controller'
+   /* import {getControllerByteData,getControllerType} from '@/api/controller'
     import {getDeviceByByteDataAndType} from "@/dataparse/model/deviceAdapter";
-    import {deviceModel} from '@/dataparse/model/sdcSoftDevice'
+    import {deviceModel} from '@/dataparse/model/sdcSoftDevice'*/
     import animation from './components/animation'
-    const {remote} = require('electron')
-    const {Menu, MenuItem} = remote
     export default {
             name:'controller-run-info',
         components:{
@@ -57,12 +55,12 @@
             window.onresize = function(){
                 self.runTabHeight=document.body.clientHeight-160
             }
-            this.configContextMenu()
+         /*   this.configContextMenu()*/
             this.setTimeInterval()
             this.showControllerData()
         },
         methods:{
-            configContextMenu(){
+            /*configContextMenu(){
                 const menu = new Menu()
                 let self=this
                 menu.append(new MenuItem({label: '参数设置',
@@ -91,7 +89,7 @@
                     e.preventDefault()
                     menu.popup({window: remote.getCurrentWindow()})
                 }, false)
-            },
+            },*/
             setTimeInterval(){
                 let timeInterVal=window.localStorage['timeInterVal']
                 if(timeInterVal) this.timeInterVal=timeInterVal
