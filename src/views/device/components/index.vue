@@ -1,6 +1,8 @@
 <template>
   <div class="map-container">
     <div id="map" class="map" :style="{height:mapHeight+'px'}"> </div>
+    <el-dialog title="运行信息" :visible.sync="dialogFormVisible"  v-dialogDrag>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -18,6 +20,7 @@
         center: {lng: 105, lat: 34},
         mapPoints:[],
         enterpriseId:'',
+        dialogFormVisible: false,
       }
     },
     mounted() {
@@ -33,7 +36,7 @@
         this.enterpriseId=this.$store.state.user.orgId;
 
         getDeviceMapListByCondition({enterpriseId:this.enterpriseId}).then((res)=>{
-          console.log(res);
+
           this.showMapData(map,res.data.data)
         })
       },
@@ -48,11 +51,14 @@
           let mk = new BMap.Marker(points);
           markers.push(mk);
           mk.addEventListener("click",()=>{
+          this.dialogFormVisible=true;
+
+            /*window.open(process.env.BASE_API+'/device/index','_blank','width=700,height=350,fullscreen=1,scrollbars=0');
             let newWindow=openElectronWindow("/controller-run-info?controllerNo="+this.mapPoints[i].controllerNo,{width: 600, height: 500,title:"运行信息"})
             newWindow.on('closed', () => {
               newWindow = null
             })
-            newWindow.setTitle("运行信息")
+            newWindow.setTitle("运行信息")*/
           })
         }
         new BMapLib.MarkerClusterer(map, {markers:markers});

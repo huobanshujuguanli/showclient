@@ -9,6 +9,7 @@ import './permission'
 import store from './store'
 import menuContext from '@/components/menuContext'
 import menuContextItem from '@/components/menuContext/menuContextItem'
+import './directives.js'
 
 Vue.use(menuContext)
 Vue.use(menuContextItem)
