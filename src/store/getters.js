@@ -13,6 +13,7 @@ const getters = {
   organizationName: state => state.user.organizationName,
   realName: state => state.user.realName,
   roleList: state => state.user.roleList,
-  resourceList: state => state.user.resourceList
+  resourceList: state => state.user.resourceList,
+  deviceRunInfoNo: state => state.user.deviceRunInfoNo
 }
 export default getters

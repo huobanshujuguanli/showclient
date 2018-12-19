@@ -12,7 +12,8 @@ const user = {
     realName: '',
     roleList: [],
     resourceList:[],
-    deviceNoList:[]
+    deviceNoList:[],
+    deviceRunInfoNo:''
   },
 
   mutations: {
@@ -39,6 +40,9 @@ const user = {
     },
     DEVICENOLIST: (state, deviceNoList) => {
       state.deviceNoList = deviceNoList
+    },
+    DEVICERUNINFONO: (state, deviceRunInfoNo) => {
+      state.deviceRunInfoNo = deviceRunInfoNo
     },
     RESOURCELIST: (state, resourceList) => {
       state.resourceList = resourceList
@@ -77,6 +81,7 @@ const user = {
             commit('ROLE_LIST', data.roleList)
             commit('RESOURCELIST', data.resourceList)
             commit('DEVICENOLIST', data.deviceNoList)
+            commit('DEVICERUNINFONO',data.orgId)
             resolve(data.resourceList)
           }else{
             reject("您没有权限进行登陆，请联系负责人")

@@ -1,14 +1,19 @@
 <template>
   <div class="map-container">
     <div id="map" class="map" :style="{height:mapHeight+'px'}"> </div>
-    <el-dialog title="运行信息" :visible.sync="dialogFormVisible"  v-dialogDrag>
-    </el-dialog>
+      <el-dialog title="运行信息" :visible.sync="dialogFormVisible"  v-dialogDrag  :style="{height:600+'px'}"  >
+        <runinfo-show></runinfo-show>
+      </el-dialog>
   </div>
 </template>
 <script>
   import {getDeviceMapListByCondition} from "@/api/device-map";
+  import runinfo from '@/views/controller-run-info'
   export default {
     name:'map-component',
+    components:{
+      'runinfoShow':runinfo
+    },
     props:{
       mapHeight:{
         type:Number,
@@ -41,7 +46,9 @@
         })
       },
       showMapData(map,data){
+
         this.mapPoints = data
+
         let markers = [];
         for (let i=0;i<this.mapPoints.length;i++) {
           if (this.mapPoints[i].longitude==null||this.mapPoints[i].latitude==null) {
@@ -53,6 +60,8 @@
           mk.addEventListener("click",()=>{
           this.dialogFormVisible=true;
 
+            this.$store.state.user.deviceRunInfoNo=this.mapPoints[i].deviceNo
+        
             /*window.open(process.env.BASE_API+'/device/index','_blank','width=700,height=350,fullscreen=1,scrollbars=0');
             let newWindow=openElectronWindow("/controller-run-info?controllerNo="+this.mapPoints[i].controllerNo,{width: 600, height: 500,title:"运行信息"})
             newWindow.on('closed', () => {
