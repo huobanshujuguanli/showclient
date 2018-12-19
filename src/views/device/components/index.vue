@@ -1,8 +1,8 @@
 <template>
   <div class="map-container">
     <div id="map" class="map" :style="{height:mapHeight+'px'}"> </div>
-      <el-dialog title="运行信息" :visible.sync="dialogFormVisible"  v-dialogDrag  :style="{height:600+'px'}"  >
-        <runinfo-show></runinfo-show>
+      <el-dialog title="运行信息" :visible.sync="dialogFormVisible" :style="{width:100+'%'}"  v-dialogDrag    >
+        <runinfo-show  :style="{height:500+'px'}"></runinfo-show>
       </el-dialog>
   </div>
 </template>

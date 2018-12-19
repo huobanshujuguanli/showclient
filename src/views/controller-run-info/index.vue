@@ -1,8 +1,8 @@
 <template>
-    <div class="product-runInfo" v-title data-title="运行信息" style="overflow-y:auto">
+    <div class="product-runInfo"  style="overflow-y:auto">
         <animation :stove-animation="controllerFormData.stoveAnimation" :fan-animation-list="controllerFormData.fanAnimationList" :beng-animation-list="controllerFormData.bengAnimationList"></animation>
         <el-row class="run-tab">
-            <el-tabs  type="card" v-model="controllerFormData.activeName" :style="{'float':'left','width':'100%','overflow-y':'auto','height':runTabHeight+'px'}">
+            <el-tabs  type="card" v-model="controllerFormData.activeName" :style="{'float':'left','width':'100%','overflow-y':'auto','font-size':'18px'}">
                 <el-tab-pane label="异常信息" name="first" v-if="controllerFormData.exceptionInfoMap&&Object.keys(controllerFormData.exceptionInfoMap).length>0">
 
                   <el-row v-for="item in controllerFormData.exceptionInfoMap" :key="item.name"><span class="dataTitle">{{item.title}}</span> </el-row>
@@ -25,7 +25,7 @@
 </template>
 <script>
     import {getControllerByteData,getControllerType} from '@/api/controller'
-    import {getDeviceByByteDataAndType} from "@/dataparse/model/deviceAdapter";
+    import {getDeviceByByteDataAndType} from "@/dataparse/model/deviceAdapter"
     import {deviceModel} from '@/dataparse/model/sdcSoftDevice'
     import animation from './components/animation'
     export default {
@@ -37,7 +37,7 @@
             return{
                 dialogDeviceFormVisible: false,
                 runTabHeight:document.body.clientHeight-125,
-                timeInterVal:3,
+                //timeInterVal:3,
                 controllerFormData:{
                     activeName:'second',
                     stoveAnimation:'',
@@ -96,11 +96,11 @@
                 if(timeInterVal) this.timeInterVal=timeInterVal
                 setInterval( ()=> {
                     this.showControllerData()
-                },1000*(this.timeInterVal));
+                },5000);
             },
             showControllerData(){
 
-                Promise.all([getControllerByteData(this.$route.query.controllerNo),getControllerType(this.$route.query.controllerNo)]).then((data)=>{
+                Promise.all([getControllerByteData( this.$store.state.user.deviceRunInfoNo),getControllerType( this.$store.state.user.deviceRunInfoNo)]).then((data)=>{
                     let controllerByteData=data[0].data
                     let controllerType=data[1].data.deviceType
                     if(controllerByteData.length>0&&controllerType){

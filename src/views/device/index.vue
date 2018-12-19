@@ -54,21 +54,14 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="所属企业" prop="enterpriseId">
-                <el-select clearable class="filter-item" v-model="deviceFormData.enterpriseId"  style="width: 100%;">
-                  <el-option v-for="item in enterpriseOption" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12">
               <el-form-item label="设备类型" prop="deviceType">
                 <el-select class="filter-item" v-model="deviceFormData.deviceType"  style="width: 100%">
                   <el-option v-for="item in deviceTypeOption" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
+          </el-row>
+          <el-row>
             <el-col :span="12">
               <el-form-item label="创建时间" prop="createDateTime">
                 <el-date-picker v-model="deviceFormData.createDateTime" type="datetime" :default-time="new Date()" default-time="00:00:00" style="width: 100%"></el-date-picker>
@@ -127,13 +120,6 @@
       BmLocalSearch
     },
     data() {
-      const validateEnterpriseFun = (rule, value, callback) => {
-        if (!value) {
-          callback(new Error('所属企业不能为空'))
-        } else {
-          callback()
-        }
-      }
       const validateDeviceTypeFun = (rule, value, callback) => {
         if (!value) {
           callback(new Error('设备类型不能为空'))
@@ -183,7 +169,7 @@
         deviceFormData: {
           saleDate:'',
           deviceNo:'',
-          enterpriseId:null,
+          enterpriseId:this.$store.state.user.orgId,
           deviceType:'',
           createDateTime:formatDateTime(new Date(),"yyyy-MM-dd hh:mm:ss"),
           longitude:'',
@@ -195,7 +181,6 @@
           address:'',
         },
         rules: {
-          enterpriseId: [{required: true,trigger: 'blur',validator: validateEnterpriseFun }],
           deviceType: [{required: true,  trigger: 'blur',validator: validateDeviceTypeFun }],
           deviceNo: [{required: true, trigger: 'blur',validator: validateDeviceNoFun}],
           createDateTime: [{ required: true, message: '创建时间不能为空', trigger: 'blur' }]
@@ -265,7 +250,7 @@
       resetTemp() {
         this.deviceFormData = {
           id:'',
-          enterpriseId:'',
+          enterpriseId:this.$store.state.user.orgId,
           media:'',
           power:'',
           deviceType:'',
