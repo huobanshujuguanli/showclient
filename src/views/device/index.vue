@@ -1,5 +1,10 @@
 <template>
   <div class="app-container">
+    <el-row class="app-query">
+      <el-input clearable v-model="listQuery.deviceNo" placeholder="设备编号"  style="width: 500px;"></el-input>
+      <el-button  type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
+      <el-button @click="handleCreate" type="primary" icon="el-icon-edit">新增</el-button>
+    </el-row>
     <!--设备列表-->
     <el-table :data="list" v-loading="listLoading" element-loading-text="给我一点时间" border fit highlight-current-row style="width: 120%" @row-contextmenu="openTableMenu">
       <el-table-column align="left" :show-overflow-tooltip="true" label="设备编号">
@@ -29,12 +34,8 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-row class="app-query">
-      <el-row>
-        <el-button @click="handleCreate" type="primary" icon="el-icon-edit">新增</el-button>
-      </el-row>
-    </el-row>
     <menu-context ref="menuContext">
+      <menu-context-item @click="handleUpdate">编辑</menu-context-item>
       <menu-context-item @click="handleDelete">删除</menu-context-item>
     </menu-context>
     <!--分页-->
@@ -74,11 +75,12 @@
               </el-form-item>
             </el-col>
           </el-row>
+          <el-row>
+            <el-form-item label="设备地址"></el-form-item>
+          </el-row>
         </el-form>
         <el-row style=" overflow-x: hidden;">
-          <div id="deviceMap" :style="{width:mapWidth+'px',height:mapHeight+'px'}" class="devicemap"></div>
           <baidu-map class="bm-view" :center="center" :zoom="zoom" :scroll-wheel-zoom="true" ak="http://api.map.baidu.com/api?v=2.0&ak=eqPZV35edaZZGefOIopjLNqTSj4qI89Y" ref="allMap" @ready="mapReady" @click="getClickInfo">
-
             <bm-city-list anchor="BMAP_ANCHOR_TOP_LEFT"></bm-city-list>
           </baidu-map>
         </el-row>
@@ -87,9 +89,7 @@
           <el-button type="primary" @click="updateData">确认</el-button>
         </div>
       </el-dialog>
-
     </div>
-
   </div>
 </template>
 
@@ -290,6 +290,7 @@
           this.deviceFormData.createDateTime=formatDateTime(this.deviceFormData.createDateTime,"yyyy-MM-dd hh:mm:ss")
         }
       },
+
       updateData(){
         this.$refs.deviceData.validate(valid => {
           this.dealDate()
@@ -303,7 +304,24 @@
           })
         })
       },
-      handleDelete(row) {
+      handleFilter() {
+        this.listQuery.pageNum = 1
+        this.getList()
+      },
+      handleUpdate(row) { //编辑功能
+        this.deviceFormData = Object.assign({}, row) // copy obj
+        if(this.deviceFormData.createDateTime){
+          this.deviceFormData.createDateTime=new Date(this.deviceFormData.createDateTime)
+        }else{
+          this.deviceFormData.createDateTime=new Date()
+        }
+        this.dialogStatus = 'update'
+        this.dialogFormVisible = true
+        this.$nextTick(() => {
+          this.$refs['deviceData'].clearValidate()
+        })
+      },
+      handleDelete(row) { //删除功能
         this.$confirm('确认删除?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -330,16 +348,14 @@
       handleCurrentChange(val) {
         this.listQuery.pageNum = val
         this.getList()
-      },
-      // 百度地图
-      mapReady ({BMap, map}) {
+      },      
+      mapReady ({BMap, map}) {  // 百度地图
         this.center.lng = 116.404;
         this.center.lat = 39.915;
         this.zoom = 15;
         window.map = map;   //将map变量存储在全局
-      },
-      // 地图点击事件
-      getClickInfo (e) {
+      },      
+      getClickInfo (e) {  // 地图点击事件
         map.clearOverlays();
         let self = this
         let selectPoint = new BMap.Point(e.point.lng,e.point.lat)
@@ -371,6 +387,6 @@
   }
   .bm-view {
     width: 100%;
-    height: 600px;
+    height:400px;
   }
 </style>

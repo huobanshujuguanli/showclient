@@ -24,9 +24,9 @@
     </div>
 </template>
 <script>
-   /* import {getControllerByteData,getControllerType} from '@/api/controller'
+    import {getControllerByteData,getControllerType} from '@/api/controller'
     import {getDeviceByByteDataAndType} from "@/dataparse/model/deviceAdapter";
-    import {deviceModel} from '@/dataparse/model/sdcSoftDevice'*/
+    import {deviceModel} from '@/dataparse/model/sdcSoftDevice'
     import animation from './components/animation'
     export default {
             name:'controller-run-info',
