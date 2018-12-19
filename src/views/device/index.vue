@@ -1,5 +1,9 @@
 <template>
   <div class="app-container">
+    <el-row class="app-query">
+      <el-input clearable v-model="listQuery.deviceNo" placeholder="设备编号"  style="width: 500px;"></el-input>
+      <el-button  type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
+    </el-row>
     <!--设备列表-->
     <el-table :data="list" v-loading="listLoading" element-loading-text="给我一点时间" border fit highlight-current-row style="width: 120%" @row-contextmenu="openTableMenu">
       <el-table-column align="left" :show-overflow-tooltip="true" label="设备编号">
@@ -35,6 +39,7 @@
       </el-row>
     </el-row>
     <menu-context ref="menuContext">
+      <menu-context-item @click="handleUpdate">编辑</menu-context-item>
       <menu-context-item @click="handleDelete">删除</menu-context-item>
     </menu-context>
     <!--分页-->
@@ -290,6 +295,7 @@
           this.deviceFormData.createDateTime=formatDateTime(this.deviceFormData.createDateTime,"yyyy-MM-dd hh:mm:ss")
         }
       },
+
       updateData(){
         this.$refs.deviceData.validate(valid => {
           this.dealDate()
@@ -303,7 +309,24 @@
           })
         })
       },
-      handleDelete(row) {
+      handleFilter() {
+        this.listQuery.pageNum = 1
+        this.getList()
+      },
+      handleUpdate(row) { //编辑功能
+        this.deviceFormData = Object.assign({}, row) // copy obj
+        if(this.deviceFormData.saleDatetime){
+          this.deviceFormData.saleDatetime=new Date(this.deviceFormData.saleDatetime)
+        }else{
+          this.deviceFormData.saleDatetime=new Date()
+        }
+        this.dialogStatus = 'update'
+        this.dialogFormVisible = true
+        this.$nextTick(() => {
+          this.$refs['deviceFormData'].clearValidate()
+        })
+      },
+      handleDelete(row) { //删除功能
         this.$confirm('确认删除?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
