@@ -25,8 +25,9 @@ const permission = {
         if(allMenus.length>0){
           const firstLevelMenus=filterFirstLevelMenus(allMenus, 0);
           firstLevelMenus.forEach(item=>{
+
             const routerItem=generateRoute(item)
-            routerItem.children=generateRoutesFromMenu(item.id,allMenus)
+            routerItem.children=generateRoutesFromMenu()
             routers.push(routerItem)
           })
         }
@@ -71,6 +72,7 @@ function generateRoutesFromMenu (id, menus = []) {
     childRouters.push(generateRoute(item))
     childRouters.children=generateRoutesFromMenu(item.id,menus)
   })
+
   return childRouters
 }
 
@@ -81,21 +83,7 @@ function generateRoutesFromMenu (id, menus = []) {
 function generateRoute(routerMap) {
   let router={};
   router.path=routerMap.routeUrl==null?'':routerMap.routeUrl;
-  if(routerMap.parentId==0){
-    router.component=Layout
-  }else{
-    if(routerMap.bindPageUrl){
-      router.component=() => import('@/views'+routerMap.bindPageUrl)
-    }else{
-      router.component=() => import('@/views/'+routerMap.routeUrl+'/index')
-    }
-    if(routerMap.hidden){
-      router.hidden=routerMap.hidden==1?true:false
-    }
-  }
-  router.name=routerMap.routeUrl||""+getUniqueString();
-  router.meta={title:routerMap.name,noCache: true }
+  router.hidden=true
   return router
 }
-
 export default permission
