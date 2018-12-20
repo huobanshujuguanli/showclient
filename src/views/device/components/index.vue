@@ -1,12 +1,23 @@
 <template>
-  <div class="map-container">
-    <div id="map" class="map" :style="{height:mapHeight+'px'}"> </div>
+  <div>
+    <div  :style="{height:50+'%',width:50+'%',float:'left'}">
+      <div id="map" class="map" :style="{height:mapHeight+'px'}"> </div>
       <el-dialog title="运行信息" :visible.sync="dialogFormVisible" :style="{width:100+'%'}"  v-dialogDrag    >
         <runinfo-show  :style="{height:500+'px'}"></runinfo-show>
       </el-dialog>
+    </div>
+
+    <div  id="weather" :style="{height:50+'%',width:50+'%',float:'left',background:'red'}">
+
+    </div>
+    <div  :style="{height:50+'%',width:50+'%',float:'left',background:'green'}">
+    </div>
+    <div  :style="{height:50+'%',width:50+'%',float:'left',background:'blue'}">
+    </div>
   </div>
+
 </template>
-<script>
+  <script>
   import {getDeviceMapListByCondition} from "@/api/device-map";
   import runinfo from '@/views/controller-run-info'
   export default {
@@ -17,7 +28,7 @@
     props:{
       mapHeight:{
         type:Number,
-        default:document.body.clientHeight-88
+        default:document.body.clientHeight/2
       }
     },
     data() {
@@ -37,6 +48,23 @@
       this.loadMapData(map)
     },
     methods: {
+      getlocation(){
+        var map = new BMap.Map("weather");
+        var point = new BMap.Point(116.331398,39.897445);
+        map.centerAndZoom(point,12);
+        var geolocation = new BMap.Geolocation();
+        geolocation.getCurrentPosition(function(r){
+          if(this.getStatus() == BMAP_STATUS_SUCCESS){
+            var mk = new BMap.Marker(r.point);
+            map.addOverlay(mk);
+            map.panTo(r.point);
+            alert('您的位置：'+r.point.lng+','+r.point.lat);
+          }
+          else {
+            alert('failed'+this.getStatus());
+          }
+        });
+      },
       loadMapData(map) {
         this.enterpriseId=this.$store.state.user.orgId;
 
@@ -61,7 +89,7 @@
           this.dialogFormVisible=true;
 
             this.$store.state.user.deviceRunInfoNo=this.mapPoints[i].deviceNo
-        
+
             /*window.open(process.env.BASE_API+'/device/index','_blank','width=700,height=350,fullscreen=1,scrollbars=0');
             let newWindow=openElectronWindow("/controller-run-info?controllerNo="+this.mapPoints[i].controllerNo,{width: 600, height: 500,title:"运行信息"})
             newWindow.on('closed', () => {
@@ -76,10 +104,4 @@
   }
 </script>
 
-<style rel="stylesheet/scss" lang="scss">
-  .map-container{
-    .map{
-      width: 100%;
-    }
-  }
-</style>
+
