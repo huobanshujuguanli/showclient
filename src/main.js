@@ -10,6 +10,7 @@ import store from './store'
 import menuContext from '@/components/menuContext'
 import menuContextItem from '@/components/menuContext/menuContextItem'
 import './directives.js'
+import echarts from 'echarts'
 
 Vue.use(menuContext)
 Vue.use(menuContextItem)
@@ -17,6 +18,7 @@ Vue.component('menu-context', menuContext)
 Vue.component('menu-context-item', menuContextItem)
 Vue.use(Element)
 Vue.config.productionTip = false
+Vue.prototype.$echarts = echarts
 
 new Vue({
   el: '#app',

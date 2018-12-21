@@ -2,7 +2,7 @@
     <div class="product-runInfo"  style="overflow-y:auto">
         <animation :stove-animation="controllerFormData.stoveAnimation" :fan-animation-list="controllerFormData.fanAnimationList" :beng-animation-list="controllerFormData.bengAnimationList"></animation>
         <el-row class="run-tab">
-            <el-tabs  type="card" v-model="controllerFormData.activeName" :style="{'float':'left','width':'100%','overflow-y':'auto','font-size':'18px'}">
+            <el-tabs  type="card" v-model="controllerFormData.activeName" :style="{'float':'left','width':'100%','overflow-y':'auto'}">
                 <el-tab-pane label="异常信息" name="first" v-if="controllerFormData.exceptionInfoMap&&Object.keys(controllerFormData.exceptionInfoMap).length>0">
 
                   <el-row v-for="item in controllerFormData.exceptionInfoMap" :key="item.name"><span class="dataTitle">{{item.title}}</span> </el-row>
@@ -61,36 +61,6 @@
             this.showControllerData()
         },
         methods:{
-            /*configContextMenu(){
-                const menu = new Menu()
-                let self=this
-                menu.append(new MenuItem({label: '参数设置',
-                    click() {
-                        self.$prompt('请输入间隔时间（秒）', '通讯参数', {
-                            confirmButtonText: '确定',
-                            cancelButtonText: '取消',
-                            inputValue:self.timeInterVal,
-                        }).then(({ value }) => {
-                            window.localStorage['timeInterVal']=value
-                            self.$message({
-                                type: 'success',
-                                message: '设置成功'
-                            });
-                        }).catch(() => {
-                            self.$message({
-                                type: 'info',
-                                message: '取消输入'
-                            });
-                        });
-                    }}
-                ))
-                menu.append(new MenuItem({type: 'separator'}))
-                menu.append(new MenuItem({label: '动画设置', click() { console.log('item 1 clicked') }}))
-                window.addEventListener('contextmenu', (e) => {
-                    e.preventDefault()
-                    menu.popup({window: remote.getCurrentWindow()})
-                }, false)
-            },*/
             setTimeInterval(){
                 let timeInterVal=window.localStorage['timeInterVal']
                 if(timeInterVal) this.timeInterVal=timeInterVal
