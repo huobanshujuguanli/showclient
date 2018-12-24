@@ -11,7 +11,7 @@ import menuContext from '@/components/menuContext'
 import menuContextItem from '@/components/menuContext/menuContextItem'
 import './directives.js'
 import echarts from 'echarts'
-
+import './icons'
 Vue.use(menuContext)
 Vue.use(menuContextItem)
 Vue.component('menu-context', menuContext)

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div :style="{height:50+'%',width:50+'%',float:'left'}">
+    <div :style="{height:80+'%',width:50+'%',float:'left'}">
       <div id="map" class="map" :style="{height:mapHeight+10+'px',top:'10px',left:'10px'}"></div>
     </div>
 
@@ -12,7 +12,7 @@
       <h5>风力：{{lives.windpower+"级"}}</h5>
       <h5>空气湿度：{{lives.humidity+"%RH"}}</h5>
     </div>
-    <div v-show="flag" class="run_info_div" :style="{height:mapHeight/2+'px'}">
+    <div v-show="flag" class="run_info_div" :style="{height:mapHeight/2+'px',width:mapWidth/2 + 'px'}">
       <runinfo-show class="runInfoShow"></runinfo-show>
     </div>
     <div v-show="flag" id="myChart" :style="{height:mapHeight/2+'px',width:mapWidth/2 + 'px'}"></div>

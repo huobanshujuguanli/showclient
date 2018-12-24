@@ -16,21 +16,9 @@ export const constantRouterMap = [
     children: [
       {
         path: 'index',
-        component: () => import('../views/home/index'),
-        name: 'home',
-        meta: { title: '首页', noCache: true}
-      }
-    ]
-  },
-  {
-    path:'/device' ,
-    component: Layout,
-    children: [
-      {
-        path: 'index',
         component: () => import('../views/device/device-map'),
         name: 'home',
-        meta: { title: '地图分布', noCache: true}
+        meta: { title: '地图分布',icon: 'map',noCache: true}
       }
     ]
   },
@@ -42,7 +30,7 @@ export const constantRouterMap = [
         path: 'index',
         component: () => import('../views/device/'),
         name: 'home',
-        meta: { title: '展示设备', noCache: true}
+        meta: { title: '展示设备',icon: 'list', noCache: true}
       }
     ]
   }

@@ -1,5 +1,5 @@
 <template>
-  <div class="tags-view-container">
+  <!--<div class="tags-view-container">
     <scroll-pane ref="scrollPane" class="tags-view-wrapper">
       <router-link
         v-for="tag in visitedViews"
@@ -21,7 +21,7 @@
       <li @click="closeOthersTags">关闭其它</li>
       <li @click="closeAllTags">关闭所有</li>
     </ul>
-  </div>
+  </div>-->
 </template>
 
 <script>

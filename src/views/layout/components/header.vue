@@ -1,6 +1,6 @@
 <template>
-  <div class="header">
-    <hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
+ <!-- <div class="header">
+
     <span class="title">简洁软件数据管理平台</span>
     <div class="right-menu">
       <span class="employee-info"><span v-if="organizationName">组织：{{organizationName}}</span>&nbsp;&nbsp;<span v-if="realName">姓名：{{realName}}</span>&nbsp;&nbsp;</span>
@@ -32,7 +32,7 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-  </div>
+  </div>-->
 </template>
 
 <script>
