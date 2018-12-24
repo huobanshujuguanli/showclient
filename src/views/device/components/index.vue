@@ -15,7 +15,7 @@
     <div v-show="flag" class="run_info_div" :style="{height:mapHeight/2+'px'}">
       <runinfo-show class="runInfoShow"></runinfo-show>
     </div>
-    <div v-show="flag" id="myChart" :style="{height:mapHeight/2+'px'}"></div>
+    <div v-show="flag" id="myChart" :style="{height:mapHeight/2+'px',width:mapWidth/2 + 'px'}"></div>
   </div>
 </template>
   <script>
@@ -35,6 +35,10 @@ export default {
     mapHeight: {
       type: Number,
       default: document.body.clientHeight - 130
+    },
+    mapWidth:{
+      type:Number,
+      default:document.body.clientWidth -130
     }
   },
   data() {
@@ -138,96 +142,77 @@ export default {
         });
       });
     },
-    drawLine() {
-      //绘制报表
+    drawLine() { //绘制报表
       var dom = document.getElementById("myChart");
       var myChart = this.$echarts.init(dom);
       var app = {};
-      var option = null;
-      function randomData() {
-        now = new Date(+now + oneDay);
-        value = value + Math.random() * 21 - 10;
-        return {
-          name: now.toString(),
-          value: [
-            [now.getFullYear(), now.getMonth() + 1, now.getDate()].join("/"),
-            Math.round(value)
-          ]
-        };
-      }
-
-      var data = [];
-      var now = +new Date(1997, 9, 3);
-      var oneDay = 24 * 3600 * 1000;
-      var value = Math.random() * 1000;
-      for (var i = 0; i < 1000; i++) {
-        data.push(randomData());
-      }
-
+      let option = null;
       option = {
-        title: {
-          text: "实时数据"
-        },
-        tooltip: {
-          trigger: "axis",
-          formatter: function(params) {
-            params = params[0];
-            var date = new Date(params.name);
-            return (
-              date.getDate() +
-              "/" +
-              (date.getMonth() + 1) +
-              "/" +
-              date.getFullYear() +
-              " : " +
-              params.value[1]
-            );
-          },
-          axisPointer: {
-            animation: false
-          }
-        },
-        xAxis: {
-          type: "time",
-          splitLine: {
-            show: false
-          }
-        },
-        yAxis: {
-          type: "value",
-          boundaryGap: [0, "100%"],
-          splitLine: {
-            show: false
-          }
-        },
-        series: [
-          {
-            name: "模拟数据",
-            type: "line",
-            showSymbol: false,
-            hoverAnimation: false,
-            data: data
-          }
-        ]
-      };
-
-      setInterval(function() {
-        for (var i = 0; i < 5; i++) {
-          data.shift();
-          data.push(randomData());
+    title: {
+        text: '数据报表'
+    },
+    tooltip: {
+        trigger: 'axis'
+    },
+    legend: {
+        data:['排烟温度','出水温度','回水温度','启炉压力','停炉压力']
+    },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },
+    toolbox: {
+        feature: {
+            saveAsImage: {}
         }
-
-        myChart.setOption({
-          series: [
-            {
-              data: data
-            }
-          ]
-        });
-      }, 1000);
-      if (option && typeof option === "object") {
-        myChart.setOption(option, true);
-      }
+    },
+    xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: ['周一','周二','周三','周四','周五','周六','周日']
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [
+        {
+            name:'排烟温度',
+            type:'line',
+            stack: '℃',
+            data:[120, 132, 101, 134, 90, 230, 210]
+        },
+        {
+            name:'出水温度',
+            type:'line',
+            stack: '℃',
+            data:[220, 182, 191, 234, 290, 330, 310]
+        },
+        {
+            name:'回水温度',
+            type:'line',
+            stack: '℃',
+            data:[150, 232, 201, 154, 190, 330, 410]
+        },
+        {
+            name:'启炉压力',
+            type:'line',
+            stack: 'MPa',
+            data:[320, 332, 301, 334, 390, 330, 320]
+        },
+        {
+            name:'停炉压力',
+            type:'line',
+            stack: 'MPa',
+            data:[820, 932, 901, 934, 1290, 1330, 1320]
+        }
+    ]
+};
+;
+if (option && typeof option === "object") {
+    myChart.setOption(option, true);
+}
     }
   }
 };
@@ -260,7 +245,6 @@ export default {
   display: none;
 }
 #myChart {
-  width: 47.5%;
   background-color: #f5f5f5;
   float: right;
   margin-top: 10px;
