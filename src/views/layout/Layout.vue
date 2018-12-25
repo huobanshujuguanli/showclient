@@ -22,7 +22,7 @@
     },
     data() {
       return {
-        appMainHeight:document.body.clientHeight-94
+        appMainHeight:window.screen.height
       }
     },
     computed: {

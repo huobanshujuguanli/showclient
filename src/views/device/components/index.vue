@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div :style="{height:80+'%',width:50+'%',float:'left'}">
+    <div :style="{height:100+'%',width:50+'%',float:'left'}">
       <div id="map" class="map" :style="{height:mapHeight+10+'px',top:'10px',left:'10px'}"></div>
     </div>
 
@@ -34,7 +34,7 @@ export default {
   props: {
     mapHeight: {
       type: Number,
-      default: document.body.clientHeight - 130
+      default: window.screen.height-30
     },
     mapWidth:{
       type:Number,
@@ -230,9 +230,9 @@ if (option && typeof option === "object") {
 }
 .run_info_div {
   float: right;
-  width: 47.5%;
+  width: 49.5%;
   margin-top: 10px;
-  margin-right: 15px;
+  margin-right: 30px;
 }
 .runInfoShow {
   height: 100%;
@@ -248,7 +248,7 @@ if (option && typeof option === "object") {
   background-color: #f5f5f5;
   float: right;
   margin-top: 10px;
-  margin-right: 15px;
+  margin-right: 30px;
 }
 </style>
 
