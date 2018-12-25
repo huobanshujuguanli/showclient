@@ -4,7 +4,7 @@
     <sidebar class="main-sidebar"></sidebar>
     <div class="main-container">
       <tags-view/>
-      <app-main :style="{'height':appMainHeight+'px','overflow-y':'auto'}"/>
+      <app-main :style="{'height':appMainHeight+'px'}"/>
     </div>
   </div>
 </template>
@@ -22,7 +22,7 @@
     },
     data() {
       return {
-        appMainHeight:document.body.clientHeight-94
+        appMainHeight:window.screen.height
       }
     },
     computed: {

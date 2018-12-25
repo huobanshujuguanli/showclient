@@ -4,12 +4,8 @@
       <div id="map" class="map" :style="{height:mapHeight+10+'px',top:'10px',left:'10px'}"></div>
     </div>
     <div id="weather" class="weather" name="el-zoom-in-top" v-show="flag">
-      <h4>城市：{{lives.province+lives.city}}</h4>
-      <h5>温度：{{lives.temperature+"℃"}}</h5>
-      <h5>天气：{{lives.weather}}</h5>
-      <h5>风向：{{lives.winddirection}}</h5>
-      <h5>风力：{{lives.windpower+"级"}}</h5>
-      <h5>空气湿度：{{lives.humidity+"%RH"}}</h5>
+    <!--  <iframe name="weather_inc" src="http://i.tianqi.com/index.php?c=code&id=64" width="540" height="291" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>-->
+      <iframe width="800" scrolling="no" height="120" frameborder="0" allowtransparency="true" src="//i.tianqi.com/index.php?c=code&id=19&icon=1&py=taian1&temp=1&num=5&site=12"></iframe>
     </div>
     <div
       v-show="flag"
