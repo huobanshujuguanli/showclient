@@ -1,39 +1,38 @@
 <template>
-  <hamburger class="hamburger-container" :isActive="sidebar.hideSidebar"></hamburger>
-  <!--<div class="header">-->
- <!---->
-    <!--&lt;!&ndash;<span class="title">简洁软件数据管理平台</span>-->
-    <!--<div class="right-menu">-->
-      <!--<span class="employee-info"><span v-if="organizationName">组织：{{organizationName}}</span>&nbsp;&nbsp;<span v-if="realName">姓名：{{realName}}</span>&nbsp;&nbsp;</span>-->
-      <!--<el-dropdown class="avatar-container right-menu-item" trigger="click">-->
-        <!--<div class="avatar-wrapper">设置<i class="el-icon-caret-bottom"></i> </div>-->
-        <!--<el-dropdown-menu slot="dropdown">-->
-          <!--<el-dropdown-item divided>-->
-            <!--<span @click="handleUpdatePassWord" style="display:block;">修改密码</span>-->
-          <!--</el-dropdown-item>-->
-          <!--<el-dropdown-item divided>-->
-            <!--<span @click="logout" style="display:block;">退出</span>-->
-          <!--</el-dropdown-item>-->
-        <!--</el-dropdown-menu>-->
-      <!--</el-dropdown>-->
-    <!--</div>-->
-    <!--<el-dialog title="修改密码" :visible.sync="dialogFormVisible" width="30%">-->
-      <!--<el-form :model="passWordChangeFormData" :rules="rules" ref="passWordChangeForm" label-width="90px"  style='width: 90%; margin-left:15px;' label-position="right">-->
-        <!--<el-form-item label="原密码" prop="oldPassWord">-->
-          <!--<el-input type="password"  v-model="passWordChangeFormData.oldPassWord" auto-complete="off"></el-input>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item label="新密码" prop="newPassWord">-->
-          <!--<el-input type="password" v-model="passWordChangeFormData.newPassWord" auto-complete="off"></el-input>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item label="新密码确认" prop="checkNewPassWord">-->
-          <!--<el-input type="password" v-model="passWordChangeFormData.checkNewPassWord" auto-complete="off"></el-input>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item>-->
-          <!--<el-button type="primary" @click="submitForm">提交</el-button>-->
-        <!--</el-form-item>-->
-      <!--</el-form>&ndash;&gt;-->
-    <!--</el-dialog>-->
-  <!--</div>-->
+  <!--<div class="header">
+    <hamburger class="hamburger-container" :toggleClick="toggleSideBar" ></hamburger>
+    <span class="title">简洁软件数据管理平台</span>
+    <div class="right-menu">
+      <span class="employee-info"><span v-if="organizationName">组织：{{organizationName}}</span>&nbsp;&nbsp;<span v-if="realName">姓名：{{realName}}</span>&nbsp;&nbsp;</span>
+      <el-dropdown class="avatar-container right-menu-item" trigger="click">
+        <div class="avatar-wrapper">设置<i class="el-icon-caret-bottom"></i> </div>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item divided>
+            <span @click="handleUpdatePassWord" style="display:block;">修改密码</span>
+          </el-dropdown-item>
+          <el-dropdown-item divided>
+            <span @click="logout" style="display:block;">退出</span>
+          </el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
+    </div>
+    <el-dialog title="修改密码" :visible.sync="dialogFormVisible" width="30%">
+      <el-form :model="passWordChangeFormData" :rules="rules" ref="passWordChangeForm" label-width="90px"  style='width: 90%; margin-left:15px;' label-position="right">
+        <el-form-item label="原密码" prop="oldPassWord">
+          <el-input type="password"  v-model="passWordChangeFormData.oldPassWord" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="新密码" prop="newPassWord">
+          <el-input type="password" v-model="passWordChangeFormData.newPassWord" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="新密码确认" prop="checkNewPassWord">
+          <el-input type="password" v-model="passWordChangeFormData.checkNewPassWord" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="submitForm">提交</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+  </div>-->
 </template>
 
 <script>
