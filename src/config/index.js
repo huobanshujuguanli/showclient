@@ -6,7 +6,5 @@ export const config={
     //城市编码URL
     baidu_map_url:'http://api.map.baidu.com',
     //百度AK
-    baidu_ak:'eqPZV35edaZZGefOIopjLNqTSj4qI89Y',
-    //高德key
-    amap_key:'be461fa7f18a297d520ddd1c7dedc753'
+    baidu_ak:'eqPZV35edaZZGefOIopjLNqTSj4qI89Y'
 }

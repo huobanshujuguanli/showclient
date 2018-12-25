@@ -3,16 +3,11 @@
     <div :style="{height:100+'%',width:50+'%',float:'left'}">
       <div id="map" class="map" :style="{height:mapHeight+10+'px',top:'10px',left:'10px'}"></div>
     </div>
-
-    <div id="weather" class="weather" name="el-zoom-in-top" v-show="flag">
-      <h4>城市：{{lives.province+lives.city}}</h4>
-      <h5>温度：{{lives.temperature+"℃"}}</h5>
-      <h5>天气：{{lives.weather}}</h5>
-      <h5>风向：{{lives.winddirection}}</h5>
-      <h5>风力：{{lives.windpower+"级"}}</h5>
-      <h5>空气湿度：{{lives.humidity+"%RH"}}</h5>
-    </div>
-    <div v-show="flag" class="run_info_div" :style="{height:mapHeight/2+'px',width:mapWidth/2 + 'px'}">
+    <div
+      v-show="flag"
+      class="run_info_div"
+      :style="{height:mapHeight/2+'px',width:mapWidth/2 + 'px'}"
+    >
       <runinfo-show class="runInfoShow"></runinfo-show>
     </div>
     <div v-show="flag" id="myChart" :style="{height:mapHeight/2+'px',width:mapWidth/2 + 'px'}"></div>
@@ -34,11 +29,11 @@ export default {
   props: {
     mapHeight: {
       type: Number,
-      default: window.screen.height-30
+      default: window.screen.height - 30
     },
-    mapWidth:{
-      type:Number,
-      default:document.body.clientWidth -130
+    mapWidth: {
+      type: Number,
+      default: document.body.clientWidth - 130
     }
   },
   data() {
@@ -116,103 +111,82 @@ export default {
         mk.addEventListener("click", () => {
           this.dialogFormVisible = true;
           this.flag = true;
-          let location = points.lng + "," + points.lat;
-          this.getWeatherInfo(location);
           this.$store.state.user.deviceRunInfoNo = this.mapPoints[i].deviceNo;
         });
       }
       new BMapLib.MarkerClusterer(map, { markers: markers });
     },
-    getWeatherInfo(location) {
-      //获得天气信息
-      console.log(location);
-      getCityCodeByLatAndLng(location).then(res => {
-        let adcode = res.data.regeocode.addressComponent.adcode;
-        getWeatherByAdCode(adcode).then(response => {
-          const data = response.data.lives[0];
-          this.weatherLives = data;
-          this.lives.province = data.province;
-          this.lives.city = data.city;
-          this.lives.temperature = data.temperature;
-          this.lives.weather = data.weather;
-          this.lives.winddirection = data.winddirection;
-          this.lives.windpower = data.windpower;
-          this.lives.humidity = data.humidity;
-          this.lives.reporttime = data.reporttime;
-        });
-      });
-    },
-    drawLine() { //绘制报表
+    drawLine() {
+      //绘制报表
       var dom = document.getElementById("myChart");
       var myChart = this.$echarts.init(dom);
       var app = {};
       let option = null;
       option = {
-    title: {
-        text: '数据报表'
-    },
-    tooltip: {
-        trigger: 'axis'
-    },
-    legend: {
-        data:['排烟温度','出水温度','回水温度','启炉压力','停炉压力']
-    },
-    grid: {
-        left: '3%',
-        right: '4%',
-        bottom: '3%',
-        containLabel: true
-    },
-    toolbox: {
-        feature: {
+        title: {
+          text: "数据报表"
+        },
+        tooltip: {
+          trigger: "axis"
+        },
+        legend: {
+          data: ["排烟温度", "出水温度", "回水温度", "启炉压力", "停炉压力"]
+        },
+        grid: {
+          left: "3%",
+          right: "4%",
+          bottom: "3%",
+          containLabel: true
+        },
+        toolbox: {
+          feature: {
             saveAsImage: {}
-        }
-    },
-    xAxis: {
-        type: 'category',
-        boundaryGap: false,
-        data: ['周一','周二','周三','周四','周五','周六','周日']
-    },
-    yAxis: {
-        type: 'value'
-    },
-    series: [
-        {
-            name:'排烟温度',
-            type:'line',
-            stack: '℃',
-            data:[120, 132, 101, 134, 90, 230, 210]
+          }
         },
-        {
-            name:'出水温度',
-            type:'line',
-            stack: '℃',
-            data:[220, 182, 191, 234, 290, 330, 310]
+        xAxis: {
+          type: "category",
+          boundaryGap: false,
+          data: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"]
         },
-        {
-            name:'回水温度',
-            type:'line',
-            stack: '℃',
-            data:[150, 232, 201, 154, 190, 330, 410]
+        yAxis: {
+          type: "value"
         },
-        {
-            name:'启炉压力',
-            type:'line',
-            stack: 'MPa',
-            data:[320, 332, 301, 334, 390, 330, 320]
-        },
-        {
-            name:'停炉压力',
-            type:'line',
-            stack: 'MPa',
-            data:[820, 932, 901, 934, 1290, 1330, 1320]
-        }
-    ]
-};
-;
-if (option && typeof option === "object") {
-    myChart.setOption(option, true);
-}
+        series: [
+          {
+            name: "排烟温度",
+            type: "line",
+            stack: "℃",
+            data: [120, 132, 101, 134, 90, 230, 210]
+          },
+          {
+            name: "出水温度",
+            type: "line",
+            stack: "℃",
+            data: [220, 182, 191, 234, 290, 330, 310]
+          },
+          {
+            name: "回水温度",
+            type: "line",
+            stack: "℃",
+            data: [150, 232, 201, 154, 190, 330, 410]
+          },
+          {
+            name: "启炉压力",
+            type: "line",
+            stack: "MPa",
+            data: [320, 332, 301, 334, 390, 330, 320]
+          },
+          {
+            name: "停炉压力",
+            type: "line",
+            stack: "MPa",
+            data: [820, 932, 901, 934, 1290, 1330, 1320]
+          }
+        ]
+      };
+      if (option && typeof option === "object") {
+        myChart.setOption(option, true);
+      }
     }
   }
 };
