@@ -3,6 +3,14 @@
     <div :style="{height:80+'%',width:50+'%',float:'left'}">
       <div id="map" class="map" :style="{height:mapHeight+10+'px',top:'10px',left:'10px'}"></div>
     </div>
+    <div id="weather" class="weather" name="el-zoom-in-top" v-show="flag">
+      <h4>城市：{{lives.province+lives.city}}</h4>
+      <h5>温度：{{lives.temperature+"℃"}}</h5>
+      <h5>天气：{{lives.weather}}</h5>
+      <h5>风向：{{lives.winddirection}}</h5>
+      <h5>风力：{{lives.windpower+"级"}}</h5>
+      <h5>空气湿度：{{lives.humidity+"%RH"}}</h5>
+    </div>
     <div
       v-show="flag"
       class="run_info_div"
@@ -111,10 +119,31 @@ export default {
         mk.addEventListener("click", () => {
           this.dialogFormVisible = true;
           this.flag = true;
+          let location = points.lng + "," + points.lat;
+          this.getWeatherInfo(location);
           this.$store.state.user.deviceRunInfoNo = this.mapPoints[i].deviceNo;
         });
       }
       new BMapLib.MarkerClusterer(map, { markers: markers });
+    },
+    getWeatherInfo(location) {
+      //获得天气信息
+      console.log(location);
+      getCityCodeByLatAndLng(location).then(res => {
+        let adcode = res.data.regeocode.addressComponent.adcode;
+        getWeatherByAdCode(adcode).then(response => {
+          const data = response.data.lives[0];
+          this.weatherLives = data;
+          this.lives.province = data.province;
+          this.lives.city = data.city;
+          this.lives.temperature = data.temperature;
+          this.lives.weather = data.weather;
+          this.lives.winddirection = data.winddirection;
+          this.lives.windpower = data.windpower;
+          this.lives.humidity = data.humidity;
+          this.lives.reporttime = data.reporttime;
+        });
+    });
     },
     drawLine() {
       //绘制报表
