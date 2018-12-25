@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div :style="{height:100+'%',width:50+'%',float:'left'}">
+    <div :style="{height:80+'%',width:50+'%',float:'left'}">
       <div id="map" class="map" :style="{height:mapHeight+10+'px',top:'10px',left:'10px'}"></div>
     </div>
     <div
@@ -204,9 +204,9 @@ export default {
 }
 .run_info_div {
   float: right;
-  width: 49.5%;
+  width: 47.5%;
   margin-top: 10px;
-  margin-right: 30px;
+  margin-right: 15px;
 }
 .runInfoShow {
   height: 100%;
@@ -222,7 +222,7 @@ export default {
   background-color: #f5f5f5;
   float: right;
   margin-top: 10px;
-  margin-right: 30px;
+  margin-right: 15px;
 }
 </style>
 
