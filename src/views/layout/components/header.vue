@@ -1,5 +1,5 @@
 <template>
-  <!--<div class="header">
+ <!-- <div class="header">
     <hamburger class="hamburger-container" :toggleClick="toggleSideBar" ></hamburger>
     <span class="title">简洁软件数据管理平台</span>
     <div class="right-menu">
@@ -95,9 +95,13 @@
         'sidebar'
       ])
     },
+    created: function() {
+      this.toggleSideBar();
+    },
     methods: {
-      toggleSideBar() {
+      toggleSideBar(){
         this.$store.dispatch('toggleSideBar')
+        console.log(1)
       },
       handleUpdatePassWord(){
         this.passWordChangeFormData.oldPassWord=''
