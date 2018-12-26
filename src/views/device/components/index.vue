@@ -1,40 +1,35 @@
 <template>
   <div>
-    <div :style="{height:80+'%',width:50+'%',float:'left'}">
-      <div id="map" class="map" :style="{height:mapHeight+10+'px',top:'10px',left:'10px'}"></div>
+    <div class="leftDiv">
+      <div id="weather" class="weather">
+        <iframe
+          scrolling="no"
+          frameborder="0"
+          allowtransparency="true"
+          :src="weatherSrc"
+          :style="{width:90 + '%',height:mapHeight/8+'px',margin:30 + 'px',center}"
+        ></iframe>
+      </div>
+      <div id="map" class="map" :style="{height:mapHeight/6*4.5+'px',margin:30 + 'px'}"></div>
     </div>
-    <div id="weather" class="weather">
-      <iframe
-        width="800"
-        scrolling="no"
-        height="120"
-        frameborder="0"
-        allowtransparency="true"
-        :src="weatherSrc"
-      ></iframe>
-    </div>
-    <div
-      v-show="flag"
-      class="run_info_div"
-      :style="{height:mapHeight/2+'px',width:mapWidth/2 + 'px'}"
-    >
-      <runinfo-show class="runInfoShow"></runinfo-show>
-    </div>
-    <div :style="{height:mapHeight/2+'px',width:mapWidth/2 + 'px',float:'right'}" v-show="flag">
+    <div class="rightDiv">
+      <div v-show="flag" class="chart" :style="{height:mapHeight/7*2+'px',width:90+ '%',marginTop:30+'px'}">
+        <runinfo-show class="runInfoShow"></runinfo-show>
+      </div>
       <div
         class="chart"
         id="lineChart"
-        :style="{height:mapHeight/2+'px',width:mapWidth/4-30 + 'px'}"
+        :style="{height:mapHeight/7*2+'px',width:90+ '%',marginTop:30+'px'}"
       ></div>
       <div
         class="chart"
         id="barChart"
-        :style="{height:mapHeight/2+'px',width:mapWidth/4-30 + 'px'}"
+        :style="{height:mapHeight/7*2+'px',width:90+ '%',marginTop:30+'px'}"
       ></div>
-    </div>
+    </div>    
   </div>
 </template>
-  <script>
+<script>
 import {
   getDeviceMapListByCondition,
   getCityCodeByLatAndLng,
@@ -184,7 +179,7 @@ export default {
       }
 
       optionLine = {
-       title: {
+        title: {
           text: "出口温度实时曲线"
         },
         tooltip: {
@@ -243,7 +238,7 @@ export default {
             }
           ]
         });
-      }, 10000);      
+      }, 10000);
       optionBar = {
         title: {
           text: "报警统计"
@@ -292,8 +287,8 @@ export default {
         ]
       };
       if (
-        (optionLine &&
-        typeof optionLine === "object") &&
+        optionLine &&
+        typeof optionLine === "object" &&
         (optionBar && typeof optionBar === "object")
       ) {
         myChart.setOption(optionLine, true);
@@ -339,22 +334,18 @@ export default {
   }
 };
 </script>
-
 <style>
+.leftDiv {
+  width: 50%;
+  float: left;
+}
+.rightDiv {
+  width: 50%;
+  float: right;
+}
 .weather {
-  width: 200px;
-  height: 300px;
-  top: 15px;
-  left: 15px;
-  position: absolute;
-  z-index: 9999;
-  background-color: transparent;
 }
 .run_info_div {
-  float: right;
-  width: 47.5%;
-  margin-top: 10px;
-  margin-right: 15px;
 }
 .runInfoShow {
   height: 100%;
@@ -368,9 +359,8 @@ export default {
 }
 .chart {
   background-color: #f5f5f5;
+  margin: 30,30,30,30;
   float: left;
-  margin-top: 10px;
-  margin-right: 15px;
 }
 </style>
 
