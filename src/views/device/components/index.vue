@@ -1,20 +1,27 @@
 <template>
-  <div>
-    <div :style="{height:80+'%',width:50+'%',float:'left'}">
-      <div id="map" class="map" :style="{height:mapHeight+10+'px',top:'10px',left:'10px'}"></div>
+  <div :style="{width:100 + '%'}">
+    <div :style="{height:300+'px',width:100+'%',float:'right'} " class="myChart" >
+        <div id="weather" class="weather" >
+          <iframe name="weather_inc" src="http://i.tianqi.com/index.php?c=code&id=13" width="650" height="221" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe></div>
+        <div class="run_info_div" :style="">
+          <runinfo-show class="runInfoShow"></runinfo-show>
+        </div>
     </div>
-    <div id="weather" class="weather" name="el-zoom-in-top" v-show="flag">
-    <!--  <iframe name="weather_inc" src="http://i.tianqi.com/index.php?c=code&id=64" width="540" height="291" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>-->
-      <iframe width="800" scrolling="no" height="120" frameborder="0" allowtransparency="true" src="//i.tianqi.com/index.php?c=code&id=19&icon=1&py=taian1&temp=1&num=5&site=12"></iframe>
-    </div>
-    <div
-      v-show="flag"
-      class="run_info_div"
-      :style="{height:mapHeight/2+'px',width:mapWidth/2 + 'px'}"
-    >
-      <runinfo-show class="runInfoShow"></runinfo-show>
-    </div>
-    <div v-show="flag" id="myChart" :style="{height:mapHeight/2+'px',width:mapWidth/2 + 'px'}"></div>
+    <div :style="{width:100 + '%'}">
+       <div :style="{height:420+'px',width:50+'%',float:'left'}">
+         <div id="map" class="map" :style="{height:mapHeight+'px'}"></div>
+       </div>
+       <div :style="{height:420+'px',width:50+'%',float:'right'}">
+         <div  id="myChart"  class="myChart" :style="{height:280+'px',width:100 + '%'}"></div>
+         <div  id="barChart" class="myChart" :style="{height:280+'px',width:100 + '%'}"></div>
+       </div>
+   </div>
+
+
+
+
+
+
   </div>
 </template>
   <script>
@@ -33,7 +40,7 @@ export default {
   props: {
     mapHeight: {
       type: Number,
-      default: window.screen.height - 30
+      default: window.screen.height - 60
     },
     mapWidth: {
       type: Number,
@@ -144,12 +151,62 @@ export default {
     drawLine() {
       //绘制报表
       var dom = document.getElementById("myChart");
+      let dom2 = document.getElementById("barChart");
       var myChart = this.$echarts.init(dom);
+      let myChart2 = this.$echarts.init(dom2);
+      let optionBar=null;
+      optionBar = {
+        title: {
+          text: "报警统计"
+        },
+        color: ["#3398DB"],
+        tooltip: {
+          trigger: "axis",
+          axisPointer: {
+// 坐标轴指示器，坐标轴触发有效
+            type: "shadow" // 默认为直线，可选为：'line' | 'shadow'
+          }
+        },
+        grid: {
+          left: "3%",
+          right: "4%",
+          bottom: "3%",
+          containLabel: true
+        },
+        xAxis: [
+          {
+            type: "category",
+            data: [
+              "燃烧器故障",
+              "超压",
+              "排烟温度高",
+              "燃气泄漏",
+              "极限低水位"
+            ],
+            axisTick: {
+              alignWithLabel: true
+            }
+          }
+        ],
+        yAxis: [
+          {
+            type: "value"
+          }
+        ],
+        series: [
+          {
+            name: "累计次数",
+            type: "bar",
+            barWidth: "60%",
+            data: [5, 3, 7, 6, 9]
+          }
+        ]
+      };
       var app = {};
       let option = null;
       option = {
         title: {
-          text: "数据报表"
+          text: "运行信息"
         },
         tooltip: {
           trigger: "axis"
@@ -163,11 +220,11 @@ export default {
           bottom: "3%",
           containLabel: true
         },
-        toolbox: {
+        /*toolbox: {
           feature: {
             saveAsImage: {}
           }
-        },
+        },*/
         xAxis: {
           type: "category",
           boundaryGap: false,
@@ -209,9 +266,14 @@ export default {
           }
         ]
       };
-      if (option && typeof option === "object") {
+      if (
+        option &&
+        typeof option === "object" &&
+        (optionBar && typeof optionBar === "object")
+      ) {
         myChart.setOption(option, true);
-      }
+        myChart2.setOption(optionBar, true);
+      };
     }
   }
 };
@@ -219,23 +281,20 @@ export default {
 
 <style>
 .weather {
-  width: 200px;
-  height: 300px;
-  top: 15px;
-  left: 15px;
-  position: absolute;
-  z-index: 9999;
-  background-color: transparent;
+  width:44%;
+  float: left;
+  margin: 44px;
+
 }
 .run_info_div {
   float: right;
-  width: 47.5%;
-  margin-top: 10px;
-  margin-right: 15px;
+  width: 50%;
+  height: 300px;
+
 }
 .runInfoShow {
   height: 100%;
-  right: 15px;
+
   background-color: #f5f5f5;
   overflow-x: hidden;
   overflow-y: scroll;
@@ -243,11 +302,9 @@ export default {
 .runInfoShow::-webkit-scrollbar {
   display: none;
 }
-#myChart {
+.myChart {
   background-color: #f5f5f5;
-  float: right;
-  margin-top: 10px;
-  margin-right: 15px;
+
 }
 </style>
 
